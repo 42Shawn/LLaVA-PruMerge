@@ -14,10 +14,10 @@
 ## How to run.
 ### Step.0: Set the environment the same as LLaVA-1.5
 
-### Download Checkpoints
+### Step.1 (for inference): Download Checkpoints
 Download the checkpoint from [here]([https://arxiv.org/abs/2310.00034](https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing)https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing) (LoRA Version).
 
-### Run the script.
+### Step.2 (for inference): Run the script.
 ```shell
 CUDA_VISIBLE_DEVICES=7 XDG_CACHE_HOME='/data/shangyuzhang/' bash scripts/v1_5/eval/testvqa.sh
 ```
