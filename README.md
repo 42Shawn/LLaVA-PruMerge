@@ -15,7 +15,7 @@
 ### Step.0: Set the environment the same as LLaVA-1.5
 
 ### Step.1 (for inference): Download Checkpoints
-Download the checkpoint from [here]([https://arxiv.org/abs/2310.00034](https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing)https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing) (LoRA Version).
+Download the checkpoint from [here]([https://arxiv.org/abs/2310.00034](https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing)https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing) (LoRA Version) to checkpoints/llava-v1.5-7b-lora-prunemerge.
 
 ### Step.2 (for inference): Run the script.
 ```shell
