@@ -17,7 +17,10 @@ Note that the core of our proposed module is [here](https://github.com/42Shawn/L
 ### Step.1 (for inference): Download Checkpoints
 Download the checkpoints (LoRA Version) from [Yuzhang's Huggingface Homepage](https://huggingface.co/yuzhang) to checkpoints/llava-v1.5-7b-lora-prunemerge.
 
-### Step.2 (for inference): Run the script.
+### Step.2 (for inference): Change the methods (PruMerge or PruMerge+).
+Change the call function of token reduction from [here](https://github.com/42Shawn/LLaVA-PruMerge/blob/main/llava/model/multimodal_encoder/clip_encoder.py#L295) in the CLIP image encoder. 
+
+### Step.3 (for inference): Run the script.
 For example, the evaluation for TextVQA is:
 ```shell
 CUDA_VISIBLE_DEVICES=7 XDG_CACHE_HOME='/data/shangyuzhang/' bash scripts/v1_5/eval/testvqa.sh
