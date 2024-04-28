@@ -173,7 +173,6 @@ class CLIPVisionTower(nn.Module):
     def token_prune_merge_advanced_plus(self, images, if_adaptive=True, reduction_ratio = 1/8):
         '''
         version 24/03/2024 using the spacially smapled tokens to supplement the pruned tokens
-        i.e. PruMerge+ in https://arxiv.org/pdf/2403.15388.pdf
         '''
         # token_indix_list = []
         # token_indix_dict = {}
@@ -207,7 +206,7 @@ class CLIPVisionTower(nn.Module):
         # # # print("idx: ", idx)
         if if_adaptive:
             step_length = int(1/reduction_ratio)
-            arithmetic_sequence = torch.arange(int(step_length/6), 575, int(step_length/3)).to(device=self.device)
+            arithmetic_sequence = torch.arange(0, 575, int(step_length/4)).to(device=self.device)
             original_tensor_1d = idx.flatten().to(device=self.device)
             filtered_sequence = torch.tensor([x for x in arithmetic_sequence if x not in original_tensor_1d]).to(device=self.device)
             concatenated_tensor = torch.cat((idx, filtered_sequence.unsqueeze(0)), dim=1)
@@ -225,7 +224,6 @@ class CLIPVisionTower(nn.Module):
                 concatenated_tensor = torch.cat((original_tensor_1d, filtered_sequence), dim=0)
                 new_idx[i] = concatenated_tensor
             idx = new_idx
-
 
         index = idx.unsqueeze(-1).expand(-1, -1, C)  # [B, left_tokens, C]
 
@@ -279,7 +277,7 @@ class CLIPVisionTower(nn.Module):
         extra_one_token = torch.sum(non_topk * non_topk_attn.unsqueeze(-1), dim=1, keepdim=True)  # [B, 1, C]
         updated_x_others = torch.cat([updated_x_others, extra_one_token],dim=1)
         image_features = updated_x_others
-        return image_features    
+        return image_features
  
     @torch.no_grad()
     def forward(self, images):
