@@ -15,7 +15,7 @@
 ### Step.0: Set the environment the same as LLaVA-1.5
 Note that the core of our proposed module is [here](https://github.com/42Shawn/LLaVA-PruMerge/blob/main/llava/model/multimodal_encoder/clip_encoder.py#L85) in the CLIP image encoder.  
 ### Step.1 (for inference): Download Checkpoints
-Download the checkpoint from [here](https://drive.google.com/file/d/1hGc6Pet_GbkwUoKMbXhr5PS7kiIE__eT/view?usp=sharing) (LoRA Version) to checkpoints/llava-v1.5-7b-lora-prunemerge.
+Download the checkpoints (LoRA Version) from [Yuzhang's Huggingface Homepage](https://huggingface.co/yuzhang) to checkpoints/llava-v1.5-7b-lora-prunemerge.
 
 ### Step.2 (for inference): Run the script.
 For example, the evaluation for TextVQA is:
