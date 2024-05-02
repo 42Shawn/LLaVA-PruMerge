@@ -1,19 +1,11 @@
 #!/bin/bash
-#     --model-base lmsys/vicuna-7b-v1.5 \
-#     --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240311-evit-token-prunemerge-advanced-8 \
-
-#     --model-path liuhaotian/llava-v1.5-7b \
-
-    # --model-base lmsys/vicuna-13b-v1.5 \
-    # --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-13b-lora-20240315-evit-token-prunemerge-advanced-8 \
-
 
 MODEL_SIZE="7b"
 SPLIT="mmbench_dev_20230712"
 
 python -m llava.eval.model_vqa_mmbench \
     --model-base lmsys/vicuna-7b-v1.5 \
-    --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240312-evit-token-prunemerge-advanced-adaptive \
+    --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-to \
     --question-file ./playground/data/eval/mmbench/$SPLIT.tsv \
     --answers-file ./playground/data/eval/mmbench/answers/$SPLIT/llava-v1.5-$MODEL_SIZE.jsonl \
     --single-pred-prompt \

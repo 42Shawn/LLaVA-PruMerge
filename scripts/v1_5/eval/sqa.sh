@@ -1,16 +1,9 @@
 #!/bin/bash
-#     --model-base lmsys/vicuna-7b-v1.5 \
-#     --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240311-evit-token-prunemerge-advanced-8 \
-
-#     --model-path liuhaotian/llava-v1.5-7b \
-
-    # --model-base lmsys/vicuna-13b-v1.5 \
-    # --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-13b-lora-20240315-evit-token-prunemerge-advanced-8 \
 
 
 python -m llava.eval.model_vqa_science \
     --model-base lmsys/vicuna-13b-v1.5 \
-    --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-13b-lora-20240315-evit-token-prunemerge-advanced-8 \
+    --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-13b-lora-20240315-to \
     --question-file ./playground/data/eval/scienceqa/llava_test_CQM-A.json \
     --image-folder ./playground/data/eval/scienceqa/images/test \
     --answers-file ./playground/data/eval/scienceqa/answers/llava-v1.5-7b.jsonl \

@@ -1,20 +1,9 @@
 # #!/bin/bash
 
-#     --model-base lmsys/vicuna-7b-v1.5 \
-#     --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240311-evit-token-prunemerge-advanced-8 \
-    # --model-base lmsys/vicuna-7b-v1.5 \
-    # --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240312-evit-token-prunemerge-advanced-adaptive \
-    # --model-base lmsys/vicuna-7b-v1.5 \
-    # --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240330-token-prunemerge-advanced_w_spacial_adaptive \
-
-#     --model-path liuhaotian/llava-v1.5-7b \
-
-    # --model-base lmsys/vicuna-13b-v1.5 \
-    # --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-13b-lora-20240315-evit-token-prunemerge-advanced-8 \
 
 python -m llava.eval.model_vqa_loader \
     --model-base lmsys/vicuna-7b-v1.5 \
-    --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-20240311-evit-token-prunemerge-advanced-8 \
+    --model-path /data/shangyuzhang/LLaVA/checkpoints/llava-v1.5-7b-lora-to-your-path \
     --question-file ./playground/data/eval/MME/llava_mme.jsonl \
     --image-folder ./playground/data/eval/MME/MME_Benchmark_release_version \
     --answers-file ./playground/data/eval/MME/answers/llava-v1.5-7b.jsonl \
