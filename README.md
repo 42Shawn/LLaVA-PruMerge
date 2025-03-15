@@ -23,7 +23,7 @@ Change the call function of token reduction from [here](https://github.com/42Sha
 ### Step.3 (for inference): Run the script.
 For example, the evaluation for TextVQA is:
 ```shell
-CUDA_VISIBLE_DEVICES=7 XDG_CACHE_HOME='/data/shangyuzhang/' bash scripts/v1_5/eval/testvqa.sh
+CUDA_VISIBLE_DEVICES=7 XDG_CACHE_HOME='/data/shangyuzhang/' bash scripts/v1_5/eval/textvqa.sh
 ```
 
 For other inference scripts, refer to [LLaVA Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
