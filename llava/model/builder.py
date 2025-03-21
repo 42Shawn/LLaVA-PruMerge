@@ -104,6 +104,29 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             else:
                 tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
                 model = LlavaLlamaForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+
+    elif 'llava' in model_name.lower() and 'bitnet' in model_name.lower():
+        # Newly introduced case through Olmollavabitnet1B where we load the model params from pretrained path. output must be tokenizer and model 
+        print('Setting up LLaVaBitnet_1.58_3B for eval........')
+        with open('checkpoints/llava-LlavaBitnet_b1_58_3B-Run2-finetune/config.json') as json_file:
+            data = json.load(json_file)
+
+        config_class = llava_olmo.LlavaOLMoBitnet1BConfig(**data)
+        model = llava_olmo.LlavaOLMoBitnet1BForCausalLM(config_class).to(device)
+        model.model.vision_tower.load_model()
+        weight_checkpoint = torch.load('checkpoints/llava-LlavaBitnet_b1_58_3B-Run3-finetune/pytorch_model.bin')
+        model.load_state_dict(weight_checkpoint)
+
+        tokenizer = AutoTokenizer.from_pretrained(
+            "NousResearch/Bitnet_b1_58_3B",
+            model_max_length=2048,
+            padding_side="right",
+            pad_token_id=1,
+            use_fast=True,
+            legacy=False,
+            unk_token='<|padding|>',
+            ) 
+    
     else:
         # Load language model
         if model_base is not None:

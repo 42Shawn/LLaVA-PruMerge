@@ -1,12 +1,10 @@
 import torch 
 import sys
-from bitnet_b1_58_3B.modeling_bitnet import OLMo 
-from OLMo_Bitnet_1B.config import ModelConfig
-from OLMo_Bitnet_1B.configuration_olmo import OLMoConfig
-from OLMo_Bitnet_1B.modeling_olmo import OLMoForCausalLM
+
 import json 
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, TextStreamer
-import llava.model.language_model.llava_olmo1p58b as llava_olmo
+from llava.model.language_model.llava_bitnet_b1_58_3B import LlavaBitnet_b1_58_3BConfig,LlavaBitnet_b1_58_3BForCausalLM
+import llava.model.language_model.llava_bitnet_b1_58_3B as llava_olmo
 import PIL
 import torchvision 
 
@@ -15,18 +13,18 @@ torch.manual_seed(42)
 
 with open('bitnet_b1_58_3B/config.json') as json_file:
     data = json.load(json_file)
-config_class = llava_olmo.LlavaOLMoBitnet1BConfig(**data)
+config_class = llava_olmo.LlavaBitnet_b1_58_3BConfig(**data)
 
-# config_class = OLMoConfig(**data)
-model = OLMoForCausalLM(config_class).to(device)
-model.load_state_dict(torch.load('OLMo_Bitnet_1B/pytorch_model.bin'))
+# config_class = LlavaBitnet_b1_58_3BConfig(**data)
+model = LlavaBitnet_b1_58_3BForCausalLM(config_class).to(device)
+model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'))
 
 model.eval()
 
-# tokenizer = AutoTokenizer.from_pretrained("NousResearch/OLMo-Bitnet-1B")
+# tokenizer = AutoTokenizer.from_pretrained("NousResearch/Bitnet_b1_58_3B")
 
 tokenizer = AutoTokenizer.from_pretrained(
-            "NousResearch/OLMo-Bitnet-1B",
+            "NousResearch/Bitnet_b1_58_3B",
             cache_dir="./cache/",
             model_max_length=1024,
             padding_side="right",
