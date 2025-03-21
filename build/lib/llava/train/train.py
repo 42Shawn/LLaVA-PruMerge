@@ -33,10 +33,9 @@ from llava.train.llava_trainer import LLaVATrainer
 from llava import conversation as conversation_lib
 from llava.model import *
 from llava.mm_utils import tokenizer_image_token
-from llava.model.language_model.llava_bitnet_b1_58_3B import LlavaBitnet_b1_58_3BConfig,LlavaBitnet_b1_58_3BForCausalLM
 
 from PIL import Image
-
+from llava.model.language_model.llava_bitnet_b1_58_3B import LlavaBitnet_b1_58_3BConfig,LlavaBitnet_b1_58_3BForCausalLM
 
 local_rank = None
 
@@ -818,7 +817,7 @@ def train():
                 cache_dir=training_args.cache_dir,
                 **bnb_model_from_pretrained_args
             )
-
+        
         elif 'Bitnet' in model_args.model_name_or_path:
             print('Setting up Bitnet model....')
             with open('llava/config.json') as json_file:
@@ -828,7 +827,7 @@ def train():
             model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
             training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
 
-        
+
         else:
             model = LlavaLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
@@ -884,16 +883,17 @@ def train():
             model_max_length=training_args.model_max_length,
             padding_side="right"
         )
-    
-    elif 'Bitnet' in model_args.model_name_or_path:
-            print('Setting up Bitnet model....')
-            with open('llava/config.json') as json_file:
-                data = json.load(json_file)
-            config = LlavaBitnet_b1_58_3BConfig(**data)
-            model = LlavaBitnet_b1_58_3BForCausalLM(config)
-            model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
-            training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
 
+    elif 'Bitnet' in model_args.model_name_or_path:
+        print('Setting up Bitnet model....')
+        with open('llava/config.json') as json_file:
+            data = json.load(json_file)
+        config = LlavaBitnet_b1_58_3BConfig(**data)
+        model = LlavaBitnet_b1_58_3BForCausalLM(config)
+        model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
+        training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
+
+        
 
     else:
         tokenizer = transformers.AutoTokenizer.from_pretrained(
