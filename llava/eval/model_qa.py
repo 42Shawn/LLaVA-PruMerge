@@ -36,7 +36,7 @@ def eval_model(model_name, questions_file, answers_file):
     model_name = os.path.expanduser(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=False)
     model = AutoModelForCausalLM.from_pretrained(model_name,
-        torch_dtype=torch.float16).cuda()
+        torch_dtype=torch.float16, use_safetensors=True).cuda()
 
 
     ques_file = open(os.path.expanduser(questions_file), "r")

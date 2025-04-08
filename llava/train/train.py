@@ -816,6 +816,7 @@ def train():
                 model_args.model_name_or_path,
                 config=config,
                 cache_dir=training_args.cache_dir,
+                use_safetensors=True,
                 **bnb_model_from_pretrained_args
             )
 
@@ -833,12 +834,14 @@ def train():
             model = LlavaLlamaForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
+                use_safetensors=True,
                 **bnb_model_from_pretrained_args
             )
     else:
         model = transformers.LlamaForCausalLM.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
+            use_safetensors=True,
             **bnb_model_from_pretrained_args
         )
     model.config.use_cache = False

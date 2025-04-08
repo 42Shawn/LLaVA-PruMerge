@@ -35,6 +35,7 @@ def main(args):
         low_cpu_mem_usage=True, 
         use_flash_attention_2=True,
         torch_dtype=torch.float16,
+        use_safetensors=True
     ).half()
     tokenizer = BitnetTokenizer.from_pretrained(args.hf_path, use_fast=False)
     loss_fct = torch.nn.CrossEntropyLoss(reduction="sum").cuda()
