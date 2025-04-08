@@ -37,7 +37,7 @@ def make_delta(base_model_path, target_model_path, delta_path, hub_repo_id):
     else:
         kwargs = {}
     target.save_pretrained(delta_path, **kwargs)
-    target_tokenizer = AutoTokenizer.from_pretrained(target_model_path)
+    target_tokenizer = AutoTokenizer.from_pretrained(target_model_path, trust_remote_code=True, trust_remote_code=True)
     target_tokenizer.save_pretrained(delta_path, **kwargs)
 
 

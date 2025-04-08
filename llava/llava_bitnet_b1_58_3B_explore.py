@@ -30,6 +30,7 @@ tokenizer = AutoTokenizer.from_pretrained(
             padding_side="right",
             pad_token_id=1,
             unk_token='<|padding|>',
+            trust_remote_code=True
             ) 
 
 text = "Paris is a historic city with architectural marvels. It is also "

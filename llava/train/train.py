@@ -885,7 +885,8 @@ def train():
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
             model_max_length=training_args.model_max_length,
-            padding_side="right"
+            padding_side="right", 
+            trust_remote_code=True
         )
     
     elif 'Bitnet' in model_args.model_name_or_path:
@@ -904,7 +905,8 @@ def train():
             cache_dir=training_args.cache_dir,
             model_max_length=training_args.model_max_length,
             padding_side="right",
-            use_fast=False,
+            use_fast=False, 
+            trust_remote_code=True
         )
 
     if model_args.version == "v0":
