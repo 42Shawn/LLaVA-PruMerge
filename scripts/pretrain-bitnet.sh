@@ -15,7 +15,7 @@ PROMPT_VERSION=plain
     # --model_name_or_path ./checkpoints/$MODEL_VERSION \
 
 
-deepspeed --include localhost:2,3 llava/train/train_mem.py \
+deepspeed --include localhost:0,1,2,3,4,5,6,7 llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
     --model_name_or_path lmsys/bitnet-v1.58-3b \
     --version $PROMPT_VERSION \
