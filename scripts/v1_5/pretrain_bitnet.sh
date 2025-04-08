@@ -2,7 +2,7 @@
 
 deepspeed --include localhost:0,1,2,3,4,5,6,7 llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path /bitnet_b1_58_3B \
+    --model_name_or_path ./bitnet_b1_58_3B \
     --version v1 \
     --data_path ./playground/data/llava_v1_5_mix665k.json \
     --image_folder ./playground/data \
