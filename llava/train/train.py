@@ -34,6 +34,7 @@ from llava import conversation as conversation_lib
 from llava.model import *
 from llava.mm_utils import tokenizer_image_token
 from llava.model.language_model.llava_bitnet_b1_58_3B import LlavaBitnet_b1_58_3BConfig,LlavaBitnet_b1_58_3BForCausalLM
+from bitnet_b1_58_3B.tokenization_bitnet import BitnetTokenizer
 
 from PIL import Image
 
@@ -881,7 +882,7 @@ def train():
         model = get_peft_model(model, lora_config)
 
     if 'mpt' in model_args.model_name_or_path:
-        tokenizer = transformers.AutoTokenizer.from_pretrained(
+        tokenizer = BitnetTokenizer.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
             model_max_length=training_args.model_max_length,
@@ -900,7 +901,7 @@ def train():
 
 
     else:
-        tokenizer = transformers.AutoTokenizer.from_pretrained(
+        tokenizer = BitnetTokenizer.from_pretrained(
             model_args.model_name_or_path,
             cache_dir=training_args.cache_dir,
             model_max_length=training_args.model_max_length,
