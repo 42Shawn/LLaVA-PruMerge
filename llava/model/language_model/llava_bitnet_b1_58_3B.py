@@ -26,7 +26,7 @@ class LlavaBitnet_b1_58_3BModel(LlavaMetaModel, BitnetMLP):
         super(LlavaBitnet_b1_58_3BModel, self).__init__(config)
 
 
-class LlavaBitne_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
+class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
     config_class = LlavaBitnet_b1_58_3BConfig
  
     def __init__(self, config):
