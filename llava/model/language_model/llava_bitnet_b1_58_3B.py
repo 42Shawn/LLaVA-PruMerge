@@ -6,7 +6,7 @@ import torch.nn as nn
 from transformers import AutoConfig, AutoModelForCausalLM
 
 from bitnet_b1_58_3B.configuration_bitnet import BitnetConfig
-from bitnet_b1_58_3B.modeling_bitnet import BitnetForCausalLM,BitnetMLP
+from bitnet_b1_58_3B.modeling_bitnet import BitnetForCausalLM,BitnetMLP,BitnetModel
 
 
 from transformers.modeling_outputs import CausalLMOutputWithPast
@@ -19,7 +19,7 @@ class LlavaBitnet_b1_58_3BConfig(BitnetConfig):
     model_type = "LlavaBitnet_b1_58_3B"
 
 
-class LlavaBitnet_b1_58_3BModel(LlavaMetaModel, BitnetMLP):
+class LlavaBitnet_b1_58_3BModel(LlavaMetaModel, BitnetModel):
     config_class = LlavaBitnet_b1_58_3BConfig
 
     def __init__(self, config: BitnetConfig):
@@ -34,8 +34,10 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
         self.model = LlavaBitnet_b1_58_3BModel(config)
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
-        self.embed_layer = self.get_input_embeddings()
-        self.model.vision_tower.load_model()
+        #self.model.embed_layer = self.get_input_embeddings()
+        self.model.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
+        self.pretraining_tp = config.pretraining_tp
+        #self.model.vision_tower.load_model()
 
         # Initialize weights and apply final processing
         self.post_init()
@@ -45,7 +47,7 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
     
     def forward(
         self,
-        hidden_states: torch.Tensor,
+        input_ids: torch.LongTensor = None,
         attention_mask: Optional[torch.Tensor] = None,
         position_ids: Optional[torch.LongTensor] = None,
         past_key_values: Optional[List[torch.FloatTensor]] = None,
@@ -55,7 +57,7 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
         output_attentions: Optional[bool] = None,
         output_hidden_states: Optional[bool] = None,
         images: Optional[torch.FloatTensor] = None,
-        image_sizes: Optional[List[List[int]]] = None,
+        # image_sizes: Optional[List[List[int]]] = None,
         return_dict: Optional[bool] = None,
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]:
 
@@ -73,12 +75,11 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
                 attention_mask,
                 past_key_values,
                 labels,
-                images,
-                image_sizes
+                images
+                # image_sizes
             )
 
         return super().forward(
-            hidden_states=hidden_states,
             input_ids=input_ids,
             attention_mask=attention_mask,
             position_ids=position_ids,
@@ -104,5 +105,5 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
             inputs['image_sizes'] = image_sizes
         return inputs
 
-AutoConfig.register("LlavaBitnet1_58-3B", LlavaOLMoBitnet1BConfig)
-AutoModelForCausalLM.register(LlavaOLMoBitnet1BConfig, LlavaOLMoBitnet1BForCausalLM)
+AutoConfig.register("LlavaBitnet_b1_58_3B", LlavaBitnet_b1_58_3BConfig)
+AutoModelForCausalLM.register(LlavaBitnet_b1_58_3BConfig, LlavaBitnet_b1_58_3BForCausalLM)

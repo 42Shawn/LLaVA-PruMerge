@@ -587,6 +587,7 @@ def preprocess_plain(
     # add end signal and concatenate together
     conversations = []
     for source in sources:
+        #print(f"[DEBUG] source = {source} (type: {type(source)})")
         assert len(source) == 2
         assert DEFAULT_IMAGE_TOKEN in source[0]['value']
         source[0]['value'] = DEFAULT_IMAGE_TOKEN
@@ -810,6 +811,7 @@ def train():
         ))
 
     if model_args.vision_tower is not None:
+        #print(model_args.model_name_or_path)
         if 'mpt' in model_args.model_name_or_path:
             config = transformers.AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
             config.attn_config['attn_impl'] = training_args.mpt_attn_impl
@@ -821,14 +823,26 @@ def train():
                 **bnb_model_from_pretrained_args
             )
 
-        elif 'Bitnet' in model_args.model_name_or_path:
+        elif 'bitnet_b1_58_3B' in model_args.model_name_or_path:
             print('Setting up Bitnet model....')
-            with open('llava/config.json') as json_file:
-                data = json.load(json_file)
-            config = LlavaBitnet_b1_58_3BConfig(**data)
-            model = LlavaBitnet_b1_58_3BForCausalLM(config)
-            model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
-            training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
+            
+            model = LlavaBitnet_b1_58_3BForCausalLM.from_pretrained(
+                model_args.model_name_or_path,
+                cache_dir=training_args.cache_dir,
+                use_safetensors=True,
+                **bnb_model_from_pretrained_args
+            )
+
+            
+            #with open('bitnet_b1_58_3B/config.json') as json_file:
+                #data = json.load(json_file)
+            
+            
+            
+            #config = LlavaBitnet_b1_58_3BConfig(**data)
+            #model = LlavaBitnet_b1_58_3BForCausalLM(config)
+            #model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
+            #training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
 
         
         else:

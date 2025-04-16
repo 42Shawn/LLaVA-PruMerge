@@ -1,7 +1,7 @@
 #!/bin/bash
 
 deepspeed --include localhost:0,1,2,3,4,5,6,7 llava/train/train_mem.py \
-    --deepspeed ./scripts/zero2.json \
+    --deepspeed ./scripts/zero3.json \
     --model_name_or_path ./bitnet_b1_58_3B \
     --version v1 \
     --data_path ./playground/data/llava_v1_5_mix665k.json \
@@ -15,7 +15,7 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 llava/train/train_mem.py \
     --bf16 True \
     --output_dir ./checkpoints/llava-bitnet_b1_58_3B-pretrain \
     --num_train_epochs 1 \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 6 \
     --per_device_eval_batch_size 4 \
     --gradient_accumulation_steps 4 \
     --evaluation_strategy "no" \
