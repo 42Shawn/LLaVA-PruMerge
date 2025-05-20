@@ -1,0 +1,16 @@
+Metadata-Version: 2.2
+Name: llava_bitnet_prumerge
+Version: 0.1
+License-File: LICENSE
+Requires-Dist: torch>=2.0.0
+Requires-Dist: transformers>=4.31.0
+Requires-Dist: accelerate>=0.21.0
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: Pillow
+Requires-Dist: peft
+Requires-Dist: bitsandbytes
+Requires-Dist: deepspeed
+Requires-Dist: matplotlib
+Requires-Dist: xformers
+Dynamic: requires-dist

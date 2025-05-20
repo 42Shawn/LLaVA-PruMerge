@@ -1,0 +1,68 @@
+Metadata-Version: 2.4
+Name: llava
+Version: 1.1.3
+Summary: Towards GPT-4 like large language and visual assistant.
+Project-URL: Homepage, https://llava-vl.github.io
+Project-URL: Bug Tracker, https://github.com/haotian-liu/LLaVA/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: Apache Software License
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: torch==2.0.1
+Requires-Dist: torchvision==0.15.2
+Requires-Dist: transformers@ git+https://github.com/huggingface/transformers@v4.31.0
+Requires-Dist: tokenizers<0.14,>=0.12.1
+Requires-Dist: sentencepiece==0.1.99
+Requires-Dist: shortuuid
+Requires-Dist: accelerate==0.21.0
+Requires-Dist: peft==0.4.0
+Requires-Dist: bitsandbytes==0.41.0
+Requires-Dist: pydantic<2,>=1
+Requires-Dist: markdown2[all]
+Requires-Dist: numpy==1.23.5
+Requires-Dist: scikit-learn==1.2.2
+Requires-Dist: gradio==3.35.2
+Requires-Dist: gradio_client==0.2.9
+Requires-Dist: requests
+Requires-Dist: httpx==0.24.0
+Requires-Dist: uvicorn
+Requires-Dist: fastapi
+Requires-Dist: einops==0.6.1
+Requires-Dist: einops-exts==0.0.4
+Requires-Dist: timm==0.6.13
+Provides-Extra: train
+Requires-Dist: deepspeed==0.9.5; extra == "train"
+Requires-Dist: ninja; extra == "train"
+Requires-Dist: wandb; extra == "train"
+Dynamic: license-file
+
+# LLaVA-PruMerge: Adaptive Token Reduction for Efficient Large Multimodal Models
+
+[Yuzhang Shang](https://42shawn.github.io/)\*, [Mu Cai](https://pages.cs.wisc.edu/~mucai/)\*, Bingxin Xu, [Yong Jae Lee](https://pages.cs.wisc.edu/~yongjaelee/)^, [Yan Yan](https://tomyan555.github.io/)^
+
+\*Equal Contribution, ^Equal Advising
+
+[[Paper](https://arxiv.org/abs/2403.15388)] [[Project Page](https://llava-prumerge.github.io/)]
+
+<div align="center">
+  <img src="https://llava-prumerge.github.io/images/architecture.png" alt="Our approach" width="50%">
+</div>
+
+
+## How to run
+### Step.0: Set the environment the same as LLaVA-1.5
+Note that the core of our proposed module is [here](https://github.com/42Shawn/LLaVA-PruMerge/blob/main/llava/model/multimodal_encoder/clip_encoder.py#L85) in the CLIP image encoder.  
+### Step.1 (for inference): Download Checkpoints
+Download the checkpoints (LoRA Version) from [Yuzhang's Huggingface Homepage](https://huggingface.co/yuzhang) to checkpoints/llava-v1.5-7b-lora-prunemerge.
+
+### Step.2 (for inference): Change the methods (PruMerge or PruMerge+).
+Change the call function of token reduction from [here](https://github.com/42Shawn/LLaVA-PruMerge/blob/main/llava/model/multimodal_encoder/clip_encoder.py#L295) in the CLIP image encoder. 
+
+### Step.3 (for inference): Run the script.
+For example, the evaluation for TextVQA is:
+```shell
+CUDA_VISIBLE_DEVICES=7 XDG_CACHE_HOME='/data/shangyuzhang/' bash scripts/v1_5/eval/textvqa.sh
+```
+
+For other inference scripts, refer to [LLaVA Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).

@@ -1,22 +1,22 @@
 #!/bin/bash
 
-deepspeed --include localhost:0,1,2,3 llava/train/train_mem.py \
-    --deepspeed ./scripts/zero2.json \
-    --model_name_or_path lmsys/vicuna-7b-v1.5 \
+deepspeed --include localhost:0,1,2,3,4,5,6,7 llava/train/train_mem.py \
+    --deepspeed ./scripts/zero3.json \
+    --model_name_or_path ./bitnet_b1_58_3B \
     --version v1 \
     --data_path ./playground/data/llava_v1_5_mix665k.json \
     --image_folder ./playground/data \
-    --vision_tower openai/clip-vit-large-patch14-336 \
+    --vision_tower wkcn/TinyCLIP-ViT-8M-16-Text-3M-YFCC15M \
     --mm_projector_type mlp2x_gelu \
     --tune_mm_mlp_adapter True \
     --mm_vision_select_layer -2 \
     --mm_use_im_start_end False \
     --mm_use_im_patch_token False \
     --bf16 True \
-    --output_dir ./checkpoints/llava-v1.5-7b-20240213-4bit \
+    --output_dir ./checkpoints/llava-bitnet_b1_58_3B-pretrain \
     --num_train_epochs 1 \
-    --per_device_train_batch_size 16 \
-    --per_device_eval_batch_size 4 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 2 \
     --gradient_accumulation_steps 4 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \

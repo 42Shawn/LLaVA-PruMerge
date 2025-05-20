@@ -32,11 +32,13 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
     def __init__(self, config):
         super(BitnetForCausalLM, self).__init__(config)
         self.model = LlavaBitnet_b1_58_3BModel(config)
+        self.pretraining_tp = config.pretraining_tp
         self.vocab_size = config.vocab_size
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
+        
         #self.model.embed_layer = self.get_input_embeddings()
-        self.model.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
-        self.pretraining_tp = config.pretraining_tp
+        #self.model.embed_tokens = nn.Embedding(config.vocab_size, config.hidden_size)
+        #self.pretraining_tp = config.pretraining_tp
         #self.model.vision_tower.load_model()
 
         # Initialize weights and apply final processing
@@ -58,10 +60,17 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
         output_hidden_states: Optional[bool] = None,
         images: Optional[torch.FloatTensor] = None,
         # image_sizes: Optional[List[List[int]]] = None,
-        return_dict: Optional[bool] = None,
+        return_dict: Optional[bool] = None
     ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[Tuple[torch.Tensor]]]:
 
+        #print(position_ids)
+        # print("before ids", input_ids.shape)
+        # print("before embedings", inputs_embeds)
+        # print("before images", images.shape)
+        # print("before past key values", past_key_values.shape)
+        # print("before labels", labels)
         if inputs_embeds is None:
+            #print("inputs_embeds is None")
             (
                 input_ids,
                 position_ids,
@@ -78,7 +87,6 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
                 images
                 # image_sizes
             )
-
         return super().forward(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -89,21 +97,26 @@ class LlavaBitnet_b1_58_3BForCausalLM(BitnetForCausalLM, LlavaMetaForCausalLM):
             use_cache=use_cache,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
-            return_dict=return_dict
+            return_dict=return_dict,
         )
 
     def prepare_inputs_for_generation(self, input_ids, past_key_values=None,
                                       inputs_embeds=None, **kwargs):
+        #print("Hello from prepare inputs for generation")
         images = kwargs.pop("images", None)
-        image_sizes = kwargs.pop("image_sizes", None)
-        inputs = super().prepare_inputs_for_generation(
+        #image_sizes = kwargs.pop("image_sizes", None)
+        _inputs = super().prepare_inputs_for_generation(
             input_ids, past_key_values=past_key_values, inputs_embeds=inputs_embeds, **kwargs
         )
+
+        _inputs.pop("cache_position")
         if images is not None:
-            inputs['images'] = images
-        if image_sizes is not None:
-            inputs['image_sizes'] = image_sizes
-        return inputs
+            _inputs['images'] = images
+        
+        # if image_sizes is not None:
+        #     inputs['image_sizes'] = image_sizes
+        #print(_inputs.keys())
+        return _inputs
 
 AutoConfig.register("LlavaBitnet_b1_58_3B", LlavaBitnet_b1_58_3BConfig)
 AutoModelForCausalLM.register(LlavaBitnet_b1_58_3BConfig, LlavaBitnet_b1_58_3BForCausalLM)

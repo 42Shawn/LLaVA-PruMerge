@@ -376,6 +376,7 @@ def preprocess_llama_2(
 
     if has_image:
         input_ids = torch.stack([tokenizer_image_token(prompt, tokenizer, return_tensors='pt') for prompt in conversations], dim=0)
+        print("We have the image")
     else:
         input_ids = tokenizer(
             conversations,
@@ -507,6 +508,10 @@ def preprocess_v1(
                     f"WARNING: tokenization mismatch: {cur_len} vs. {total_len}."
                     f" (ignored)"
                 )
+        
+        # print("Prompt:", conversation)
+        # print(target)
+
 
     return dict(
         input_ids=input_ids,
@@ -825,7 +830,8 @@ def train():
 
         elif 'bitnet_b1_58_3B' in model_args.model_name_or_path:
             print('Setting up Bitnet model....')
-            
+            #config = transformers.AutoConfig.from_pretrained(model_args.model_name_or_path, trust_remote_code=True)
+
             model = LlavaBitnet_b1_58_3BForCausalLM.from_pretrained(
                 model_args.model_name_or_path,
                 cache_dir=training_args.cache_dir,
@@ -862,7 +868,10 @@ def train():
     model.config.use_cache = False
 
     if model_args.freeze_backbone:
+        print("backbone is frozen")
         model.model.requires_grad_(False)
+    if model_args.freeze_backbone == False:
+        print("backbone is not frozen")
 
     if training_args.bits in [4, 8]:
         from peft import prepare_model_for_kbit_training
@@ -904,14 +913,14 @@ def train():
             trust_remote_code=True
         )
     
-    elif 'Bitnet' in model_args.model_name_or_path:
-            print('Setting up Bitnet model....')
-            with open('llava/config.json') as json_file:
-                data = json.load(json_file)
-            config = LlavaBitnet_b1_58_3BConfig(**data)
-            model = LlavaBitnet_b1_58_3BForCausalLM(config)
-            model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
-            training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
+    # elif 'Bitnet' in model_args.model_name_or_path:
+    #         print('Setting up Bitnet model....')
+    #         with open('llava/config.json') as json_file:
+    #             data = json.load(json_file)
+    #         config = LlavaBitnet_b1_58_3BConfig(**data)
+    #         model = LlavaBitnet_b1_58_3BForCausalLM(config)
+    #         model.load_state_dict(torch.load('Bitnet_b1_58_3B/pytorch_model.bin'), strict=False)
+    #         training_args.save_safetensors = False # setting this as model saving is not happening due to shared tensors in the embed_token addition. 
 
 
     else:
@@ -934,6 +943,7 @@ def train():
     elif model_args.version == "v0.5":
         tokenizer.pad_token = tokenizer.unk_token
     else:
+        print("We will not be switching the pad token to the unk token")
         tokenizer.pad_token = tokenizer.unk_token
         if model_args.version in conversation_lib.conv_templates:
             conversation_lib.default_conversation = conversation_lib.conv_templates[model_args.version]
