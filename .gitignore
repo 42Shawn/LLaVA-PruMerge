@@ -1,0 +1,16 @@
+**/__pycache__/
+build/
+checkpoints/
+playground/data/
+playground/data/gqa/
+playground/data/llava_v1_5_mix665k.json
+playground/data/ocr_vqa/
+playground/data/textvqa/
+playground/data/vg/
+bitnet_b1_58_3B/model-00001-of-00003.safetensors
+bitnet_b1_58_3B/model-00002-of-00003.safetensors
+bitnet_b1_58_3B/model-00003-of-00003.safetensors
+bitnet_b1_58_3B/tokenizer.model
+flash-attention/ 
+wandb/
+

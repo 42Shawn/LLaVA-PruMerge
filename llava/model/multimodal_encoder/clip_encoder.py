@@ -295,9 +295,9 @@ class CLIPVisionTower(nn.Module):
             # image_forward_outs = self.vision_tower(images.to(device=self.device, dtype=self.dtype), output_hidden_states=True)
             # image_features = self.feature_select(image_forward_outs).to(images.dtype)
 
-            # image_features = self.token_prune_merge_advanced(images, if_adaptive=True, reduction_ratio=1/8)
+            image_features = self.token_prune_merge_advanced(images, if_adaptive=True, reduction_ratio=1/8)
             
-            image_features = self.token_prune_merge_advanced_plus(images, if_adaptive=True, reduction_ratio=1/8) 
+            # image_features = self.token_prune_merge_advanced_plus(images, if_adaptive=True, reduction_ratio=1/8) 
 
         return image_features
 
