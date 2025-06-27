@@ -1,4 +1,5 @@
 # LLaVA-PruMerge: Adaptive Token Reduction for Efficient Large Multimodal Models
+## ICCV 2025 
 
 [Yuzhang Shang](https://42shawn.github.io/)\*, [Mu Cai](https://pages.cs.wisc.edu/~mucai/)\*, Bingxin Xu, [Yong Jae Lee](https://pages.cs.wisc.edu/~yongjaelee/)^, [Yan Yan](https://tomyan555.github.io/)^
 
@@ -27,3 +28,15 @@ CUDA_VISIBLE_DEVICES=7 XDG_CACHE_HOME='/data/shangyuzhang/' bash scripts/v1_5/ev
 ```
 
 For other inference scripts, refer to [LLaVA Evaluation](https://github.com/haotian-liu/LLaVA/blob/main/docs/Evaluation.md).
+
+# Reference
+If you find our code useful for your research, please cite our paper.
+```
+@inproceedings{
+shang2023prumerge,
+title={LLaVA-PruMerge: Adaptive Token Reduction for Efficient Large Multimodal Models},
+author={Yuzhang Shang and Mu Cai and Bingxin Xu and Yong Jae Lee and Yan Yan},
+booktitle={ICCV},
+year={2025}
+}
+```
