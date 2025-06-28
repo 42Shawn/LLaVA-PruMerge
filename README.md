@@ -33,7 +33,7 @@ For other inference scripts, refer to [LLaVA Evaluation](https://github.com/haot
 If you find our code useful for your research, please cite our paper.
 ```
 @inproceedings{
-shang2023prumerge,
+shang2025prumerge,
 title={LLaVA-PruMerge: Adaptive Token Reduction for Efficient Large Multimodal Models},
 author={Yuzhang Shang and Mu Cai and Bingxin Xu and Yong Jae Lee and Yan Yan},
 booktitle={ICCV},
