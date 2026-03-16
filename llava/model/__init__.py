@@ -1,2 +1,2 @@
-from .language_model.llava_llama import LlavaLlamaForCausalLM, LlavaConfig
+from .language_model.llava_bitnet_b1_58_3B import LlavaBitnet_b1_58_3BForCausalLM, LlavaBitnet_b1_58_3BConfig
 from .language_model.llava_mpt import LlavaMPTForCausalLM, LlavaMPTConfig

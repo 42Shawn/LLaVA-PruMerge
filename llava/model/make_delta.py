@@ -13,11 +13,11 @@ from llava.model.utils import auto_upgrade
 def make_delta(base_model_path, target_model_path, delta_path, hub_repo_id):
     print("Loading base model")
     base = AutoModelForCausalLM.from_pretrained(
-        base_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True)
+        base_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True, use_safetensors=True)
 
     print("Loading target model")
     auto_upgrade(target_model_path)
-    target = AutoModelForCausalLM.from_pretrained(target_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True)
+    target = AutoModelForCausalLM.from_pretrained(target_model_path, torch_dtype=torch.float16, low_cpu_mem_usage=True, use_safetensors=True)
 
     print("Calculating delta")
     for name, param in tqdm(target.state_dict().items(), desc="Calculating delta"):
@@ -37,7 +37,7 @@ def make_delta(base_model_path, target_model_path, delta_path, hub_repo_id):
     else:
         kwargs = {}
     target.save_pretrained(delta_path, **kwargs)
-    target_tokenizer = AutoTokenizer.from_pretrained(target_model_path)
+    target_tokenizer = AutoTokenizer.from_pretrained(target_model_path, trust_remote_code=True, trust_remote_code=True)
     target_tokenizer.save_pretrained(delta_path, **kwargs)
 
 

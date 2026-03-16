@@ -1,0 +1,11 @@
+torch>=2.0.0
+transformers>=4.31.0
+accelerate>=0.21.0
+numpy
+scipy
+Pillow
+peft
+bitsandbytes
+deepspeed
+matplotlib
+xformers

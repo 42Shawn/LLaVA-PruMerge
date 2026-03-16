@@ -2,7 +2,7 @@
 
 deepspeed --include localhost:0,1,2,3 llava/train/train_mem.py \
     --deepspeed ./scripts/zero2.json \
-    --model_name_or_path lmsys/vicuna-13b-v1.5 \
+    --model_name_or_path lmsys/vicuna-7b-v1.5 \
     --version v1 \
     --data_path ./playground/data/llava_v1_5_mix665k.json \
     --image_folder ./playground/data \

@@ -61,6 +61,20 @@ def tokenizer_image_token(prompt, tokenizer, image_token_index=IMAGE_TOKEN_INDEX
         raise ValueError(f'Unsupported tensor type: {return_tensors}')
     return input_ids
 
+# def tokenizer_image_token_bitnet(prompt, tokenizer, num_image_tokens=256, return_tensors=None):
+#     im_patch_token = "<im_patch>"
+    
+#     # Make sure special tokens are added
+#     if im_patch_token not in tokenizer.get_vocab():
+#         tokenizer.add_special_tokens({"additional_special_tokens": ["<image>", "<im_patch>", "<im_start>", "<im_end>"]})
+    
+#     # Replace <image> with 256 <im_patch> tokens
+#     patched_prompt = prompt.replace("<image>", " ".join([im_patch_token] * num_image_tokens))
+    
+#     tokenized = tokenizer(patched_prompt, return_tensors=return_tensors)
+#     return tokenized.input_ids if return_tensors else tokenized.input_ids[0]
+
+
 
 def get_model_name_from_path(model_path):
     model_path = model_path.strip("/")

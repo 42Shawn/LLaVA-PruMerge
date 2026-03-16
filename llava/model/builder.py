@@ -21,6 +21,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig, BitsAn
 import torch
 from llava.model import *
 from llava.constants import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+from bitnet_b1_58_3B.tokenization_bitnet import BitnetTokenizer
+from bitnet_b1_58_3B.configuration_bitnet import BitnetConfig
 
 
 def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, load_4bit=False, device_map="auto", device="cuda", **kwargs):
@@ -47,10 +49,21 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
         if 'lora' in model_name.lower() and model_base is None:
             warnings.warn('There is `lora` in model name but no `model_base` is provided. If you are loading a LoRA model, please provide the `model_base` argument. Detailed instruction: https://github.com/haotian-liu/LLaVA#launch-a-model-worker-lora-weights-unmerged.')
         if 'lora' in model_name.lower() and model_base is not None:
-            lora_cfg_pretrained = AutoConfig.from_pretrained(model_path)
-            tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
+            print(model_path)
+            print(model_base)
+            lora_cfg_pretrained = BitnetConfig.from_pretrained(model_path)
+            #tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False,trust_remote_code=True)
+            tokenizer = BitnetTokenizer.from_pretrained(
+                model_base,
+                use_fast=False, 
+                trust_remote_code= True,
+                model_max_length=2048,
+                padding_side="right"       
+            )
             print('Loading LLaVA from base model...')
-            model = LlavaLlamaForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=lora_cfg_pretrained, **kwargs)
+            
+            #model = LlavaLlamaForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, use_safetensors=True, config=lora_cfg_pretrained, **kwargs)
+            model = LlavaBitnet_b1_58_3BForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, use_safetensors=True, config=lora_cfg_pretrained, **kwargs)
             token_num, tokem_dim = model.lm_head.out_features, model.lm_head.in_features
             if model.lm_head.weight.shape[0] != token_num:
                 model.lm_head.weight = torch.nn.Parameter(torch.empty(token_num, tokem_dim, device=model.device, dtype=model.dtype))
@@ -74,11 +87,11 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
                 non_lora_trainables = {(k[6:] if k.startswith('model.') else k): v for k, v in non_lora_trainables.items()}
             model.load_state_dict(non_lora_trainables, strict=False)
 
-            from peft import PeftModel
-            print('Loading LoRA weights...')
-            model = PeftModel.from_pretrained(model, model_path)
-            print('Merging LoRA weights...')
-            model = model.merge_and_unload()
+            # from peft import PeftModel
+            # print('Loading LoRA weights...')
+            # model = PeftModel.from_pretrained(model, model_path)
+            # print('Merging LoRA weights...')
+            # model = model.merge_and_unload()
             print('Model is loaded...')
         elif model_base is not None:
             # this may be mm projector only
@@ -86,31 +99,65 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
             if 'mpt' in model_name.lower():
                 if not os.path.isfile(os.path.join(model_path, 'configuration_mpt.py')):
                     shutil.copyfile(os.path.join(model_base, 'configuration_mpt.py'), os.path.join(model_path, 'configuration_mpt.py'))
-                tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=True)
+                tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=True,trust_remote_code=True)
                 cfg_pretrained = AutoConfig.from_pretrained(model_path, trust_remote_code=True)
-                model = LlavaMPTForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=cfg_pretrained, **kwargs)
+                model = LlavaMPTForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, use_safetensors=True, config=cfg_pretrained, **kwargs)
+            
+            elif "bit" in model_name.lower():
+                print("loading llava from base bit model") 
+                tokenizer = BitnetTokenizer.from_pretrained(model_base,use_fast=False, trust_remote_code= True,       
+            )
+                cfg_pretrained = BitnetConfig.from_pretrained(model_path)
+                model = LlavaBitnet_b1_58_3BForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, use_safetensors=True, config=cfg_pretrained, **kwargs)
+            
             else:
-                tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
+                tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False, trust_remote_code=True)
                 cfg_pretrained = AutoConfig.from_pretrained(model_path)
-                model = LlavaLlamaForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, config=cfg_pretrained, **kwargs)
+                model = LlavaLlamaForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, use_safetensors=True, config=cfg_pretrained, **kwargs)
 
             mm_projector_weights = torch.load(os.path.join(model_path, 'mm_projector.bin'), map_location='cpu')
             mm_projector_weights = {k: v.to(torch.float16) for k, v in mm_projector_weights.items()}
             model.load_state_dict(mm_projector_weights, strict=False)
         else:
             if 'mpt' in model_name.lower():
-                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
-                model = LlavaMPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True, trust_remote_code=True)
+                model = LlavaMPTForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, use_safetensors=True, **kwargs)
             else:
-                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
-                model = LlavaLlamaForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False, trust_remote_code=True)
+                model = LlavaLlamaForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, use_safetensors=True, **kwargs)
+
+    # elif 'llava' in model_name.lower() and 'bitnet' in model_name.lower():
+    #     print("loading llava bitnet model for e")
+        
+        # Newly introduced case through Olmollavabitnet1B where we load the model params from pretrained path. output must be tokenizer and model 
+        # print('Setting up LLaVaBitnet_1.58_3B for eval........')
+        # with open('checkpoints/llava-LlavaBitnet_b1_58_3B-Run2-finetune/config.json') as json_file:
+        #     data = json.load(json_file)
+
+        # config_class = llava_olmo.LlavaOLMoBitnet1BConfig(**data)
+        # model = llava_olmo.LlavaOLMoBitnet1BForCausalLM(config_class).to(device)
+        # model.model.vision_tower.load_model()
+        # weight_checkpoint = torch.load('checkpoints/llava-LlavaBitnet_b1_58_3B-Run3-finetune/pytorch_model.bin')
+        # model.load_state_dict(weight_checkpoint)
+
+        # tokenizer = AutoTokenizer.from_pretrained(
+        #     "NousResearch/Bitnet_b1_58_3B",
+        #     model_max_length=2048,
+        #     padding_side="right",
+        #     pad_token_id=1,
+        #     use_fast=True,
+        #     legacy=False,
+        #     unk_token='<|padding|>',
+        #     trust_remote_code=True
+        #     ) 
+    
     else:
         # Load language model
         if model_base is not None:
             # PEFT model
             from peft import PeftModel
-            tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False)
-            model = AutoModelForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, **kwargs)
+            tokenizer = AutoTokenizer.from_pretrained(model_base, use_fast=False , trust_remote_code=True)
+            model = AutoModelForCausalLM.from_pretrained(model_base, low_cpu_mem_usage=True, use_safetensors=True, **kwargs)
             print(f"Loading LoRA weights from {model_path}")
             model = PeftModel.from_pretrained(model, model_path)
             print(f"Merging weights")
@@ -120,11 +167,11 @@ def load_pretrained_model(model_path, model_base, model_name, load_8bit=False, l
         else:
             use_fast = False
             if 'mpt' in model_name.lower():
-                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True)
+                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=True, trust_remote_code=True)
                 model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, trust_remote_code=True, **kwargs)
             else:
-                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
-                model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, **kwargs)
+                tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False, trust_remote_code=True)
+                model = AutoModelForCausalLM.from_pretrained(model_path, low_cpu_mem_usage=True, use_safetensors=True, **kwargs)
 
     image_processor = None
 
